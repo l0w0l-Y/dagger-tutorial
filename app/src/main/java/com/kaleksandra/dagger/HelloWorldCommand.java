@@ -5,24 +5,19 @@ import java.util.List;
 import javax.inject.Inject;
 
 final class HelloWorldCommand implements Command {
+    private final Outputter outputter;
+
     @Inject
-    HelloWorldCommand(Outputter outPutter) {
-        this.outPutter = outPutter;
-    }
-
-    Outputter outPutter;
-
-    @Override
-    public String key() {
-        return "hello";
+    HelloWorldCommand(Outputter outputter) {
+        this.outputter = outputter;
     }
 
     @Override
-    public Status handleInput(List<String> input) {
-        if (!input.isEmpty()) {
-            return Status.INVALID;
+    public Result handleInput(List<String> args) {
+        if (!args.isEmpty()) {
+            return Result.invalid();
         }
-        outPutter.output("world!");
-        return Status.HANDLED;
+        outputter.output("howdy!");
+        return Result.handled();
     }
 }

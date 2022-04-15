@@ -20,6 +20,7 @@ class ConsoleOutputter implements Outputter {
     }
 }
 
+
 @Module
 abstract class OutputterModule {
     @Provides

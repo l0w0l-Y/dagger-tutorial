@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 class Database {
     private final Map<String, Account> accounts = new HashMap<>();
 
@@ -35,6 +37,14 @@ class Database {
 
         BigDecimal balance() {
             return balance;
+        }
+
+        void deposit(BigDecimal deposit) {
+            this.balance = this.balance.add(deposit);
+        }
+
+        void withdraw(BigDecimal deposit) {
+            this.balance = this.balance.subtract(deposit);
         }
     }
 }

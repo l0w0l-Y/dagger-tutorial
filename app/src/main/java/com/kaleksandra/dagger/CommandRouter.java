@@ -6,12 +6,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import dagger.Component;
-
 final class CommandRouter {
     private final Map<String, Command> commands;
+    private final Outputter outputter;
 
-    Command.Status route(String input) {
+    Command.Result route(String input) {
         List<String> splitInput = split(input);
         if (splitInput.isEmpty()) {
             return invalidCommand(input);
@@ -23,31 +22,23 @@ final class CommandRouter {
             return invalidCommand(input);
         }
 
-        Command.Status status =
-                command.handleInput(splitInput.subList(1, splitInput.size()));
-        if (status == Command.Status.INVALID) {
-            System.out.println(commandKey + ": invalid arguments");
-        }
-        return status;
+        List<String> args = splitInput.subList(1, splitInput.size());
+        Command.Result result = command.handleInput(args);
+        return result.status().equals(Command.Status.INVALID) ? invalidCommand(input) : result;
     }
 
-    private Command.Status invalidCommand(String input) {
-        System.out.printf("couldn't understand \"%s\". please try again.%n", input);
-        return Command.Status.INVALID;
+    private Command.Result invalidCommand(String input) {
+        outputter.output(String.format("couldn't understand \"%s\". please try again.", input));
+        return Command.Result.invalid();
     }
 
-    // Split on whitespace
-    private static List<String> split(String string) {
-        return Arrays.asList(string.split(" "));
+    private static List<String> split(String input) {
+        return Arrays.asList(input.trim().split("\\s+"));
     }
 
     @Inject
-    CommandRouter(Map<String, Command> commands) {
+    CommandRouter(Map<String, Command> commands, Outputter outputter) {
         this.commands = commands;
+        this.outputter = outputter;
     }
-}
-
-@Component(modules = {HelloWorldModule.class, OutputterModule.class, LoginCommandModule.class})
-interface CommandRouterFactory {
-    CommandRouter router();
 }

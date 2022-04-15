@@ -5,10 +5,13 @@ import java.util.Scanner;
 class CommandLineAtm {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        CommandRouter commandRouter = DaggerCommandRouterFactory.create().router();
+        CommandProcessor commandProcessor = CommandProcessorFactory.create().commandProcessor();
 
         while (scanner.hasNextLine()) {
-            commandRouter.route(scanner.nextLine());
+            Command.Status commandStatus = commandProcessor.process(scanner.nextLine());
+            if (commandStatus.equals(Command.Status.INPUT_COMPLETED)) {
+                break;
+            }
         }
     }
 }

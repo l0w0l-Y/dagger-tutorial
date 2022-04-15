@@ -8,24 +8,25 @@ final class WithdrawCommand extends BigDecimalCommand {
     private final Database.Account account;
     private final Outputter outputter;
     private final BigDecimal minimumBalance;
-    private final BigDecimal maximumWithdrawal;
+    private final WithdrawalLimiter withdrawalLimiter;
 
     @Inject
     WithdrawCommand(
             Outputter outputter,
             Database.Account account,
             @MinimumBalance BigDecimal minimumBalance,
-            @MaximumBalance BigDecimal maximumWithdrawal) {
+            WithdrawalLimiter withdrawalLimiter) {
         super(outputter);
         this.account = account;
         this.outputter = outputter;
         this.minimumBalance = minimumBalance;
-        this.maximumWithdrawal = maximumWithdrawal;
+        this.withdrawalLimiter = withdrawalLimiter;
     }
 
     @Override
     public void handleAmount(BigDecimal amount) {
-        if (amount.compareTo(maximumWithdrawal) > 0) {
+        BigDecimal remainingWithdrawalLimit = withdrawalLimiter.remainingWithdrawalLimit();
+        if (amount.compareTo(remainingWithdrawalLimit) > 0) {
             // output error
             return;
         }
@@ -36,6 +37,8 @@ final class WithdrawCommand extends BigDecimalCommand {
         } else {
             account.withdraw(amount);
             outputter.output("your new balance is: " + account.balance());
+            withdrawalLimiter.recordWithdrawal(amount);
         }
     }
+
 }

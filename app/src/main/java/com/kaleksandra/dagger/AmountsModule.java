@@ -1,5 +1,7 @@
 package com.kaleksandra.dagger;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.math.BigDecimal;
@@ -18,7 +20,7 @@ interface AmountsModule {
     }
 
     @Provides
-    @MaximumBalance
+    @MaximumWithdrawal
     static BigDecimal maximumWithdrawal() {
         return new BigDecimal(1000);
     }
@@ -29,5 +31,5 @@ interface AmountsModule {
 @interface MinimumBalance {}
 
 @Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@interface MaximumBalance {}
+@Retention(RUNTIME)
+@interface MaximumWithdrawal { }

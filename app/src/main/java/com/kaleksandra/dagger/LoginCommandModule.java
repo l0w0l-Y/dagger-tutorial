@@ -1,6 +1,7 @@
 package com.kaleksandra.dagger;
 
 import dagger.Binds;
+import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.StringKey;
@@ -11,4 +12,7 @@ abstract class LoginCommandModule {
     @IntoMap
     @StringKey("login")
     abstract Command loginCommand(LoginCommand command);
+
+    @BindsOptionalOf
+    abstract Database.Account optionalAccount();
 }
